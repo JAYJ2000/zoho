@@ -1,0 +1,300 @@
+/* struct to store studentlogin details,bookdetails, issue detail, return details.
+ */
+import Foundation
+struct StudentLogin{
+var studentName:String
+    var studentId:Int
+    
+}
+struct Book{
+var bookId:Int
+    var name:String
+    var author:String
+    var available:Int
+}
+struct Issue{
+    var studentId:Int
+    var bookId:Int
+    var currentDate:Date
+}
+
+
+/* classes containing different functions for library management*/
+class Library{
+            
+var book:[Book]=[]
+var studentlogin:[StudentLogin]=[]
+var issue:[Issue]=[]
+                
+                        //Menu Function
+func menu(){
+    var userInput = -1
+repeat {
+    print("""
+    \n
+          menu
+         ======
+    1-Add Book
+    2-Available Books
+    3-Remove book
+    4-Add student login
+    5-Available student
+    6-remove student
+    7-Issue book
+    8-Issued books
+    9-Return book
+    0-exit
+    """)
+
+if let input=readLine(){
+            if let userInputInt=Int(input){
+          userInput=userInputInt}}
+switch(userInput){
+
+case 0:
+print("Exit successfully")
+
+case 1:
+addBook()
+
+case 2:
+availableBook()
+
+case 3:
+removeBook()
+
+case 4:
+addStudentLogin()
+    
+case 5:
+availableStudents()
+
+case 6:
+removeStudent()
+
+case 7:
+addIssue()
+
+case 8:
+issuedBooks()
+
+case 9:
+returnBook()
+default:
+    print("Invalid input")
+    }} while userInput != 0 ;
+
+}                        
+
+func addBook(){
+    
+                            //Function to add book
+    
+//getting input
+    var bookId:Int
+    var name=""
+    var author=""
+    var available:Int=0
+    
+    
+    print("Enter book id" , terminator:" ")
+    if let bookIdInput=readLine(){
+        if let bookIdInt=Int(bookIdInput){
+            bookId=bookIdInt
+//checking for bookId found or not
+    for book in book where book.bookId == bookId{
+            print("Book id is already exist")
+            return
+}
+ 
+//get book name, author name and count of books
+    print("Enter book name")
+    if let nameInput=readLine(){
+        name=nameInput
+    }
+    
+    print("Enter author name")
+    if let authorInput=readLine(){
+        author=authorInput
+    }
+    
+    print("Enter number of books")
+    if let countAvailable=readLine(){
+        if let availableInt=Int(countAvailable){
+            available=availableInt
+    if available > 0 {
+book.append(Book(bookId:bookId,name:name,author:author,available:available))
+print("Book added successfully")
+} else { print("Cannot add book of count 0")}
+        }else{print("Enter a valid number of books")}}
+        }else{ print("Enter a valid book id")}}
+    }
+    
+                    //available books
+    
+    func availableBook(){
+    if book.count == 0 {
+            print("No books available")
+            return
+        }
+        for book in book{
+        
+            print("""
+                 
+\nBook id      :\(book.bookId)
+Book name    :\(book.name)
+Book author  :\(book.author)
+Book availabe:\(book.available) \n
+""")
+        }
+    }
+    
+                    //Remove book
+    
+    func removeBook(){
+        var bookToDelete:Int
+        print("Enter the book id to delete")
+        if let bookToDeleteInput=readLine(){
+            if let bookToDeleteInt=Int(bookToDeleteInput){
+                bookToDelete=bookToDeleteInt
+            
+//finding book and delete from library
+                
+                for index in 0..<book.count where book[index].bookId == bookToDelete{
+            book.remove(at: index)
+            print("Book deleted successfully")
+            return
+        }
+                print("Book not found")
+            }else{print("Enter a valid book id")}}}
+    
+                    //Add student login
+
+    func addStudentLogin(){
+        var studentName=""
+        var studentId:Int
+        print("Enter student id")
+        if let nameInput=readLine(){            //input from user
+            if let studentIdInt=Int(nameInput){
+                studentId=studentIdInt
+                for student in studentlogin where student.studentId == studentId{         //checking for whether input from user exist or not
+                        print("StudentId already exist")
+                        return
+                    }
+        print("Enter student name:")
+        if let nameInput=readLine(){
+            studentName=nameInput
+        }
+        
+        studentlogin.append(StudentLogin(studentName:studentName,studentId:studentId))
+        print("Student id is created successfully")
+            }else{print("Enter a valid student id")}}}
+        
+                        //Available Students
+    
+    func availableStudents(){
+    if studentlogin.count == 0 { 
+            print("No student found")
+            return
+        }
+        for student in studentlogin{
+            print("""
+Student id      :\(student.studentId)
+Student name    :\(student.studentName)
+ \n
+""")
+        }
+    }
+                        //Remove student
+    
+    func removeStudent(){
+        let removeId:Int
+        print("Enter student id")
+        
+        if let removeIdInput = readLine(){
+            if let removeIdInt=Int(removeIdInput){
+                removeId=removeIdInt
+        for studentIndex in 0..<studentlogin.count where studentlogin[0].studentId == removeId{
+                studentlogin.remove(at : studentIndex)
+                print("Removed successfully")
+                return
+
+        }
+        print("Student not found with this id")
+            }else { print("Enter a valid student id") }}}
+    
+                    //add issue
+    
+    func addIssue(){
+    var studentId:Int;var studentFound = false
+    var bookId:Int;var bookFound = false
+
+      print("Enter Student id")
+      if let studentIdInput = readLine(){
+        if let studentIdInputInt = Int(studentIdInput){
+          studentId = studentIdInputInt         
+            for student in studentlogin where student.studentId == studentId{ //execute if student id is found
+              studentFound = true
+              print("Enter book Id")
+              if let bookIdInput = readLine(){
+                if let bookIdInputInt = Int(bookIdInput){
+                  bookId = bookIdInputInt
+                  bookFound = true
+                    for student in 0..<book.count where book[student].bookId == bookId{ //execute if book id is found
+                            if book[student].available > 0 && book[student]{
+                                book[student].available = book[student].available-1
+                           let currentDate = Date()
+                           issue.append(Issue(studentId:studentId , bookId:bookId , currentDate: currentDate))
+                                print("issued successfully")
+                                return
+                            }else{ print("Books not available")
+                                return
+                            }}}}else{print("Invalid Book Id")}}}else{print("Invalid student Id")}}
+    print("Book id or student id not found")
+    }
+                            //issuedBooks
+    func issuedBooks(){
+        for issue in issue{
+            print("""
+            ISSUED BOOKS
+            ============
+
+Book Id     : \(issue.bookId)
+Student Id  : \(issue.studentId)
+Issued Date : \(issue.currentDate) \n
+
+""")
+        }
+    }
+    
+    
+                            //return book
+    func returnBook()  {
+        let studentId:Int
+        let bookId:Int
+           
+        
+        for issueIndex in 0..<issue.count where issue[issueIndex].studentId == studentId && book[issueIndex].bookId == bookId{  //checking student and book id exist
+                                    let issueDate = issue[issueIndex].currentDate     //getting issued date
+                                    let returnDate=Date()                     //returning date
+                                    var dateComponent=DateComponents()
+            dateComponent.timeZone = TimeZone.current
+                dateComponent.day = 30
+                                    
+                                    if let dueDate = Calendar.current.date(byAdding: dateComponent, to:issueDate){
+                                        if(dueDate < returnDate){
+                                            print("Due date exceed! pay penality")
+                                        }
+                                        else{
+                                            issue.remove(at: issueIndex)
+                                            for bookIndex in 0..<book.count where book[bookIndex].bookId == bookId{
+                                                    book[bookIndex].available = book[bookIndex].available + 1
+                                                print("Book returned successfully"); return
+                                            }
+                                        }
+                                    };print("Book id or student id not found")
+        }}}
+
+var library=Library()
+library.menu()
+
