@@ -226,31 +226,29 @@ Student name    :\(student.studentName)
                     //add issue
     
     func addIssue(){
-    var studentId:Int;var studentFound = false
-    var bookId:Int;var bookFound = false
+    var studentId:Int
+    var bookId:Int
 
       print("Enter Student id")
       if let studentIdInput = readLine(){
         if let studentIdInputInt = Int(studentIdInput){
           studentId = studentIdInputInt         
             for student in studentlogin where student.studentId == studentId{ //execute if student id is found
-              studentFound = true
               print("Enter book Id")
               if let bookIdInput = readLine(){
                 if let bookIdInputInt = Int(bookIdInput){
                   bookId = bookIdInputInt
-                  bookFound = true
-                    for student in 0..<book.count where book[student].bookId == bookId{ //execute if book id is found
-                            if book[student].available > 0 && book[student]{
-                                book[student].available = book[student].available-1
+                    for bookIndex in 0..<book.count where book[bookIndex].bookId == bookId{ //execute if book id is found
+                            if book[bookIndex].available > 0{
+                                book[bookIndex].available = book[bookIndex].available-1
                            let currentDate = Date()
                            issue.append(Issue(studentId:studentId , bookId:bookId , currentDate: currentDate))
                                 print("issued successfully")
                                 return
                             }else{ print("Books not available")
                                 return
-                            }}}}else{print("Invalid Book Id")}}}else{print("Invalid student Id")}}
-    print("Book id or student id not found")
+                            }}}else{print("Invalid Book Id");return}}}}else{print("Invalid student Id");return}}
+       print("Book id or student id not found")
     }
                             //issuedBooks
     func issuedBooks(){
@@ -270,9 +268,16 @@ Issued Date : \(issue.currentDate) \n
     
                             //return book
     func returnBook()  {
-        let studentId:Int
-        let bookId:Int
-           
+        var studentId:Int 
+        var bookId:Int
+           print("Enter Student id")
+      if let studentIdInput = readLine(){
+        if let studentIdInputInt = Int(studentIdInput){
+          studentId = studentIdInputInt         
+      print("Enter book Id")
+              if let bookIdInput = readLine(){
+                if let bookIdInputInt = Int(bookIdInput){
+                  bookId = bookIdInputInt              
         
         for issueIndex in 0..<issue.count where issue[issueIndex].studentId == studentId && book[issueIndex].bookId == bookId{  //checking student and book id exist
                                     let issueDate = issue[issueIndex].currentDate     //getting issued date
@@ -292,8 +297,8 @@ Issued Date : \(issue.currentDate) \n
                                                 print("Book returned successfully"); return
                                             }
                                         }
-                                    };print("Book id or student id not found")
-        }}}
+                                    }
+        };print("Book id or student id not found")}}}}}}
 
 var library=Library()
 library.menu()
