@@ -1,0 +1,263 @@
+
+protocol StationeryHaving{
+  func addItem()
+  func addQuantity()
+  func availableItem()
+  func removeItem()
+  func purchaseItem() 
+}
+
+import Foundation
+class Stationery : StationeryHaving{
+
+struct Item{
+    var itemId:Int 
+    var name:String
+    var price:Int
+    var quantity:Int
+   
+}
+struct Purchase{
+  var itemId:Int
+  var name:String
+  var price:Int
+  var quantity:Int
+  var total:Int
+}
+            
+var item:[Item]=[]
+var purchase:[Purchase]=[]
+init(){
+item.append(Item(itemId : 1, name : "Pen", price : 5 , quantity : 50 ))
+item.append(Item(itemId: 2, name: "Pencil", price: 5, quantity: 100 ))}
+  
+                            //Menu Function
+func menu(){
+    var userInput = -1
+repeat {
+    print("""
+    \n
+          menu
+         ======
+    1-Add new Item
+    2-Add Quantity of Item
+    3-Available Item
+    4-Remove Item
+    5-Purchase Item
+    0-exit
+    """)
+
+if let input=readLine(){
+            if let userInputInt=Int(input){
+          userInput=userInputInt}}
+switch(userInput){
+
+case 0:
+print("Exit successfully")
+
+case 1:
+addItem()
+
+case 2:
+addQuantity()
+  
+case 3:
+availableItem()
+
+case 4:
+removeItem()
+
+case 5:
+purchaseItem()
+
+default:
+    print("Invalid input")
+    }} while userInput != 0 ;
+
+}                        
+
+
+    
+                            //Function to add item
+   func addItem(){ 
+//getting input
+    var itemId:Int
+    var name=""
+    var price:Int
+    var quantity:Int
+    
+    
+    print("Enter item id" , terminator:" ")
+    if let itemIdInput=readLine(){
+        if let itemIdInt=Int(itemIdInput){
+            itemId = itemIdInt
+//checking for itemId found or not
+          
+    for singleitem in item where singleitem.itemId == itemId{
+            print("item is already exist")
+            return
+}
+ 
+//get item name, price, quantity
+    print("Enter item name")
+    if let nameInput=readLine(){
+        name = nameInput
+    }
+    
+    print("Enter price")
+    if let priceInput=readLine(){
+      if let priceInputInt = Int(priceInput){
+        price = priceInputInt
+    
+    
+    print("Enter quantity")
+    if let quantityInput = readLine(){
+        if let quantityInt = Int(quantityInput){
+            quantity=quantityInt
+          
+    if quantity > 0 {
+item.append(Item(itemId:itemId,name:name,price:price,quantity:quantity))
+print("new item added successfully")
+} else { print("Cannot add 0 quantity")}
+        }else{print("Enter a valid quantity")}}
+        }else{ print("Enter a valid price")}}}else{print("Invalid id")}}}
+
+                        //Add quantity
+  func addQuantity(){
+    var addItemId: Int
+    var quantity: Int
+    print("Enter item id")
+    if let input = readLine(){
+      if let inputInt = Int(input){
+        addItemId = inputInt
+        for index in 0 ..< item.count where item[index].itemId == addItemId{
+          print("Enter Quantity to add")
+          if let quantityInput = readLine(){
+            if let quantityInputInt = Int(quantityInput){
+              quantity = quantityInputInt
+              item[index].quantity += quantity
+              print("Quantity added successfully")
+              return
+            }
+          }
+        } ;print("Item Id not found")
+      }else{print("Invalid id type")}
+    }
+  }
+                        //Available item
+
+  func availableItem(){
+    if item.count == 0 {
+            print("No item available")
+            return
+        }
+        for singleItem in item{
+        
+            print("""
+                 
+\nItem id     :\(singleItem.itemId)
+Item name   :\(singleItem.name)
+Item price  :\(singleItem.price)
+Quantity    :\(singleItem.quantity) \n
+""")
+        }
+    }
+                    //Remove item
+  
+    func removeItem(){
+        var itemToDelete: Int
+        print("Enter the item id to delete")
+        if let itemToDeleteInput=readLine(){
+            if let itemToDeleteInt=Int(itemToDeleteInput){
+                itemToDelete=itemToDeleteInt
+            
+//finding item and delete from grocery
+                
+                for index in 0..<item.count where item[index].itemId == itemToDelete{
+            item.remove(at: index)
+            print("Item deleted successfully")
+            return
+        }
+                print("Item not found")
+            }else{print("Enter a valid Item id")}}}
+
+                    //Purchase item
+
+  func purchaseItem(){
+    purchase = []
+    var quantity:Int
+    var itemId:Int
+    var total:Int
+    var continuePurchase = -1
+    var sum = 0
+    var numberOfItem = 0
+OuterLoop:    repeat{
+      var found = 0
+    print("Enter item id")
+    if let itemIdInput = readLine(){
+      if let itemIdInt = Int(itemIdInput){
+        itemId = itemIdInt
+        
+        for index in 0 ..< item.count where item[index].itemId == itemId{
+          found = 1
+          print("""
+                \nItem Name : \(item[index].name)
+                Item price : \(item[index].price)
+                Available Quantity : \(item[index].quantity)\n
+                """)
+        
+        print("Enter Quantity ")
+        if let quantityInput = readLine(){
+          if let quantityInputInt = Int(quantityInput){
+            quantity = quantityInputInt
+            if item[index].quantity < quantity || quantity <= 0 {
+              print("Quantity not available")
+              continue OuterLoop 
+            }
+            item[index].quantity = item[index].quantity - quantity
+            total = item[index].price * quantity
+            purchase.append(Purchase(itemId: itemId, name: item[index].name, price: item[index].price, quantity: quantity, total: total))
+            numberOfItem += 1
+            print("item added\n")
+    }else{print("Invalid quantity")}}};if found == 0 {print("Item not found")}}else{print("Invalid id")}}
+    print("1-Continue 0-End purchase")
+            if let continueInput = readLine(){
+              if let continueInputInt = Int(continueInput){
+                continuePurchase = continueInputInt            
+}}}while(continuePurchase == 1)
+    if numberOfItem > 0{
+  print("Item Purchased Successfully")
+  print("""
+        
+                          BILL
+                          ====
+        """)
+    for index in 0 ..< purchase.count{
+      print("ID : \(purchase[index].itemId) Name : \(purchase[index].name) Price : \(purchase[index].price) Quantity : \(purchase[index].quantity) Total :  \(purchase[index].total)")
+      sum += purchase[index].total 
+    }
+  
+print("""
+     ======================================================
+     
+     Total item : \(numberOfItem)                  Total price         \(sum)
+     """)
+}
+  }
+  }
+    
+
+var stationery = Stationery()
+stationery.menu()
+
+
+
+
+
+
+
+
+
+
+
+
