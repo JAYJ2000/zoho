@@ -152,6 +152,10 @@ Book availabe:\(book.available) \n
                     //Remove book
     
     func removeBook(){
+      if book.count == 0{
+        print("No books available to remove")
+        return
+      }
         var bookToDelete:Int
         print("Enter the book id to delete")
         if let bookToDeleteInput=readLine(){
@@ -252,6 +256,10 @@ Student name    :\(student.studentName)
     }
                             //issuedBooks
     func issuedBooks(){
+      if issue.count == 0{
+        print("No issued books")
+        return
+      }
         for issue in issue{
             print("""
             ISSUED BOOKS
@@ -268,6 +276,10 @@ Issued Date : \(issue.currentDate) \n
     
                             //return book
     func returnBook()  {
+      if issue.count == 0{
+        print("No issued books for return")
+        return
+      }
         var studentId:Int 
         var bookId:Int
            print("Enter Student id")
@@ -289,6 +301,7 @@ Issued Date : \(issue.currentDate) \n
                                     if let dueDate = Calendar.current.date(byAdding: dateComponent, to:issueDate){
                                         if(dueDate < returnDate){
                                             print("Due date exceed! pay penality")
+                                            return
                                         }
                                         else{
                                             issue.remove(at: issueIndex)
@@ -298,7 +311,7 @@ Issued Date : \(issue.currentDate) \n
                                             }
                                         }
                                     }
-        };print("Book id or student id not found")}}}}}}
+        };print("Book id or student id not found")}else{print("Invalid book id")}}}else{print("Invalid Id")}}}}
 
 var library=Library()
 library.menu()
