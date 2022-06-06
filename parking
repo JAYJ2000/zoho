@@ -122,9 +122,10 @@ class Parking{
 
   func parkBike() {
     var parkSlot:Int
+    print("\n     PARK BIKE\n")
     print("Enter the bike number")
     if let bikeNumber = readLine(){
-    if (bikeSlot.contains{$0.value == bikeNumber}) == false{  //Checks whether bike number already exists
+    if (bikeSlot.contains{$0.value.lowercased() == bikeNumber.lowercased()}) == false{  //Checks whether bike number already exists
     availableSlotForBike()
     print("\nEnter the slot number")
     if let slotInput = readLine(){
@@ -156,20 +157,22 @@ class Parking{
                     //3.Available slots for bike
   
   func availableSlotForBike(){
-    var available = false
+    var available = 0
     print("Available slots:")
     bikeSlot.sorted(by: <).forEach{key,value in 
                      if value == ""{          //if available ,show slot
                        print(key, terminator: " ")
-                       available = true
+                       available += 1
                      }
                     }
-    if available == false{print("No slot available")}
+   print("\nTotal: \(available)/\(totalCarSlot) available")
+    if available == 0{print("No slot available")}
   }
 
                     //4.Search bike by slot
   func searchBikeBySlot(){
     var slot:Int
+    print("\n    SEARCH BIKE BY SLOT\n")
     print("Enter the slot number")
     if let slotInput = readLine(){
       if let slotInputInt = Int(slotInput){
@@ -183,11 +186,12 @@ class Parking{
   
                        //5.Search bike by number
   func searchBikeByNumber(){
+    print("\n      SEARCH BIKE BY NUMBER\n")
     print("Enter the bike number to search")
     var found = false
     if let bikeNumber = readLine(){
       bikeSlot.forEach{key,value in
-                      if(value == bikeNumber){
+                      if(value.lowercased() == bikeNumber.lowercased()){
                         print("Bike number \(value) is found at \(key) slot")
                         found = true
                         return
@@ -227,9 +231,10 @@ class Parking{
 
   func parkCar() {
     var parkSlot:Int
+    print("\n    PARK CAR\n")
     print("Enter the car number")
     if let carNumber = readLine(){
-    if (carSlot.contains{$0.value == carNumber}) == false{  //Checks whether car number already exists
+    if (carSlot.contains{$0.value.lowercased() == carNumber.lowercased()}) == false{  //Checks whether car number already exists
     availableSlotForCar()
     print("\nEnter the slot number")
     if let slotInput = readLine(){
@@ -262,21 +267,23 @@ class Parking{
                     //9.Available slots for car
   
   func availableSlotForCar(){
-    var available = false
+    var available = 0
     print("Available slots:")
     carSlot.sorted(by: <).forEach{key,value in 
                      if value == ""{          //if available ,show slot
                        print(key, terminator: " ")
-                       available = true
+                       available += 1
                      }
                     }
-    if available == false{print("No slot available")}
+    print("Total: \(available)/\(totalCarSlot) available")
+    if available == 0{print("No slot available")}
   }
 
                       //10.Search car by slot
   
   func searchCarBySlot(){
     var slot:Int
+    print("\n    SEARCH CAR BY SLOT\n")
     print("Enter the slot number")
     if let slotInput = readLine(){
       if let slotInputInt = Int(slotInput){
@@ -290,11 +297,12 @@ class Parking{
   
                        //11.Search car by number
   func searchCarByNumber(){
+    print("\n    SEARCH CAR BY NUMBER \n")
     print("Enter the car number to search")
     var found = false
     if let carNumber = readLine(){
       carSlot.forEach{key,value in
-                      if(value == carNumber){
+                      if(value.lowercased() == carNumber.lowercased()){
                         print("car number \(value) is found at \(key) slot")
                         found = true
                         return
@@ -332,8 +340,13 @@ class Parking{
 
                         //13.Bike Log Detaisls
   func bikeLogDetails(){
+    print("""
+            BIKE LOG DETAILS
+            ================
+         """)
     bikeparkinglog.forEach{bike in
       print("""
+                      
             Bike number    : \(bike.vehicleNumber)
             Slot           : \(bike.slotNumber)
             Park date      : \(bike.fromDate)
@@ -344,8 +357,13 @@ class Parking{
   }
                           //14.Car Log Detaisls
   func carLogDetails(){
+    print("""
+            CAR LOG DETAILS
+            ===============
+         """)
     carparkinglog.forEach{car in
       print("""
+                      
             Car number     : \(car.vehicleNumber)
             Slot           : \(car.slotNumber)
             Park date      : \(car.fromDate)
