@@ -14,11 +14,13 @@ struct CarParkingLog{
 }
 
 class Parking{
+  
   var totalCarSlot: Int = 0
   var totalBikeSlot: Int = 0
   var bikeSlot:[Int:String] = [:]
   var carSlot:[Int:String] = [:]
   var bikeparkinglog:[BikeParkingLog] = []
+  var carparkinglog:[CarParkingLog] = []
 
                             //Total Slot
   func totalSlot(){  
@@ -93,9 +95,22 @@ class Parking{
           self.searchBikeByNumber()
           case 6:
           self.departingBike()
+          case 7:
+          self.parkCar()
+          case 8:
+          self.carParkingDetails()
+          case 9:
+          self.availableSlotForCar()
+          case 10:
+          self.searchCarBySlot()
+          case 11:
+          self.searchCarByNumber()
+          case 12:
+          self.departingCar()
           case 13:
           self.bikeLogDetails()
-          
+          case 14:
+          self.carLogDetails()
           default :
           print("Invalid input")
         }       
@@ -208,7 +223,114 @@ class Parking{
         else{print("No bike found")}
       }else {print("Invalid input")}}}
 
-                        //Bike Log Detaisls
+                                      //7.Park car
+
+  func parkCar() {
+    var parkSlot:Int
+    print("Enter the car number")
+    if let carNumber = readLine(){
+    if (carSlot.contains{$0.value == carNumber}) == false{  //Checks whether car number already exists
+    availableSlotForCar()
+    print("\nEnter the slot number")
+    if let slotInput = readLine(){
+      if let slotInputInt = Int(slotInput){
+        parkSlot = slotInputInt
+        if carSlot[parkSlot] == ""{    //Checks available slot and allocate
+          carSlot[parkSlot] = carNumber
+          let dateformatter = DateFormatter()
+          dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+          let currentDate = dateformatter.string(from: Date())
+          carparkinglog.append(CarParkingLog(slotNumber: parkSlot, vehicleNumber: carNumber, fromDate: currentDate))
+          print("Slot allocated successfully")
+        }
+        else{
+          print("Invalid slot number")
+        }
+      }else{ print("Invalid input")}
+    }}else{print("Car is already found")}
+     }}
+
+      
+                    //8.Car parking details
+  
+  func carParkingDetails(){
+    print("Car Parking Details\n")
+    carSlot.sorted(by: <).forEach{key,value in  //sort slots in ascending order and show
+                    print("\(key) - \((value == "") ? "Available" : value )")
+                    }
+  }
+                    //9.Available slots for car
+  
+  func availableSlotForCar(){
+    var available = false
+    print("Available slots:")
+    carSlot.sorted(by: <).forEach{key,value in 
+                     if value == ""{          //if available ,show slot
+                       print(key, terminator: " ")
+                       available = true
+                     }
+                    }
+    if available == false{print("No slot available")}
+  }
+
+                      //10.Search car by slot
+  
+  func searchCarBySlot(){
+    var slot:Int
+    print("Enter the slot number")
+    if let slotInput = readLine(){
+      if let slotInputInt = Int(slotInput){
+        slot = slotInputInt
+    if carSlot[slot] == ""{
+      print("No car found")
+    }
+    else if slot > totalCarSlot || slot <= 0{print("No Slot found")}        //if input is above max or below 1
+    else{print("\(slot) - \(carSlot[slot] ?? "")")}}else{print("Invalid input")}}
+  }
+  
+                       //11.Search car by number
+  func searchCarByNumber(){
+    print("Enter the car number to search")
+    var found = false
+    if let carNumber = readLine(){
+      carSlot.forEach{key,value in
+                      if(value == carNumber){
+                        print("car number \(value) is found at \(key) slot")
+                        found = true
+                        return
+                        }}
+      if found == false{print("\(carNumber) is not found")}
+    }   
+  }
+                      //12.Departing car
+  
+  func departingCar(){
+    var slot:Int
+    print("""
+          DEPARTING CAR
+          =============
+         """)
+    self.carParkingDetails()
+    print("Enter slot number")
+    if let slotInput = readLine(){
+      if let slotInputInt = Int(slotInput){
+        slot = slotInputInt
+        
+        if(carSlot[slot] != ""){ //checking whether car is available
+          carSlot[slot] = ""     //car departed
+          for index in  stride(from: carparkinglog.count-1, through: 0, by: -1) where carparkinglog[index].slotNumber == slot{ //to store departing date and time
+            let dateformatter = DateFormatter()
+            dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            let currentDate = dateformatter.string(from: Date())
+              carparkinglog[index].toDate = currentDate
+            break
+          }
+          print("car departed successfully")
+        }
+        else{print("No car found")}
+      }else {print("Invalid input")}}}
+
+                        //13.Bike Log Detaisls
   func bikeLogDetails(){
     bikeparkinglog.forEach{bike in
       print("""
@@ -216,6 +338,18 @@ class Parking{
             Slot           : \(bike.slotNumber)
             Park date      : \(bike.fromDate)
             Departing date : \(bike.toDate ?? "")
+            \n
+           """)
+    }
+  }
+                          //14.Car Log Detaisls
+  func carLogDetails(){
+    carparkinglog.forEach{car in
+      print("""
+            Car number     : \(car.vehicleNumber)
+            Slot           : \(car.slotNumber)
+            Park date      : \(car.fromDate)
+            Departing date : \(car.toDate ?? "")
             \n
            """)
     }
