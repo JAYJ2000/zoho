@@ -1,3 +1,4 @@
+import Foundation
 
 protocol StationeryHaving{
   func addItem()
@@ -7,7 +8,7 @@ protocol StationeryHaving{
   func purchaseItem() 
 }
 
-import Foundation
+
 class Stationery : StationeryHaving{
 
 struct Item{
