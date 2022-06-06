@@ -1,28 +1,77 @@
+                                          //PARKING
+import Foundation
+struct BikeParkingLog{
+  var slotNumber:Int
+  var vehicleNumber:String
+  var fromDate:String
+  var toDate: String?
+}
+struct CarParkingLog{
+  var slotNumber:Int
+  var vehicleNumber:String
+  var fromDate:String
+  var toDate:String?
+}
 
 class Parking{
   var totalCarSlot: Int = 0
   var totalBikeSlot: Int = 0
   var bikeSlot:[Int:String] = [:]
   var carSlot:[Int:String] = [:]
+  var bikeparkinglog:[BikeParkingLog] = []
+
+                            //Total Slot
+  func totalSlot(){  
+
+     print("Enter the total bike slot")          //max bike
+     if let totalBikeSlotInput = readLine(){
+      if let totalBikeSlotInt = Int(totalBikeSlotInput){
+        totalBikeSlot = totalBikeSlotInt
+        
+    print("Enter the total car slot")          //max bike
+    if let totalCarSlotInput = readLine(){
+      if let totalCarSlotInt = Int(totalCarSlotInput){
+        totalCarSlot = totalCarSlotInt
+     if totalBikeSlot > 0{  //checking for no slot
+        for bikeSlotNumber in 1 ... totalBikeSlot {
+          bikeSlot[bikeSlotNumber] = ""
+        }}
+     if totalCarSlot > 0{ //checking for no slot
+        for carSlotNumber in 1 ... totalCarSlot{
+          carSlot[carSlotNumber] = ""
+        }}
+      if totalBikeSlot != 0 || totalCarSlot != 0{
+        print("Bike and car slot allocated successfully")
+        self.menu()
+      }else{print("Atleast 1 slot is needed")}       
+         }else{print("Invalid input")} }
+      }else{print("Invalid input")} }
+  }
+
                             //Menu
   func menu(){
     var userChoice:Int = -1
     repeat{
     print("""
-                   MENU
-                   ~~~~ 
+          \n
+              MENU
+              ~~~~  
           1.Park bike
-          2.Parked bike details
+          2.Bike parking details
           3.Available slot for bike
           4.Search bike by slot
           5.Search bike by number plate
           6.Departing bike
+          
+          7.Park car
+          8.Car parking details
+          9.Available slot for car
+          10.Search car by slot
+          11.Search car by number plate
+          12.Departing car
 
-          6.Park car
-          7.Available slot for car
-          8.Search car by slot
-          9.Search car by number plate
-          10.Departing car
+          13.Bike log details
+          14.Car log details
           0.Exit
 
          """)
@@ -35,11 +84,18 @@ class Parking{
           case 1:
           self.parkBike()
           case 2:
-          self.parkedBike()
+          self.bikeParkingDetails()
           case 3:
           self.availableSlotForBike()
           case 4:
           self.searchBikeBySlot()
+          case 5:
+          self.searchBikeByNumber()
+          case 6:
+          self.departingBike()
+          case 13:
+          self.bikeLogDetails()
+          
           default :
           print("Invalid input")
         }       
@@ -47,70 +103,53 @@ class Parking{
     }}while(userChoice != 0)
   }
 
-                            //Total Slot
-  func totalSlot(){  
-
-     print("Enter the total bike slot")
-     if let totalBikeSlotInput = readLine(){
-      if let totalBikeSlotInt = Int(totalBikeSlotInput){
-        totalBikeSlot = totalBikeSlotInt
-        
-    print("Enter the total car slot")
-    if let totalCarSlotInput = readLine(){
-      if let totalCarSlotInt = Int(totalCarSlotInput){
-        totalCarSlot = totalCarSlotInt
-     
-        for bikeSlotNumber in 1 ... totalBikeSlot {
-          bikeSlot[bikeSlotNumber] = ""
-        }
-        
-        for carSlotNumber in 1 ... totalCarSlot{
-          carSlot[carSlotNumber] = ""
-        }
-
-        print("Bike and car slot allocated successfully")
-        self.menu()
-        
-         }else{print("Invalid input")} }
-      }else{print("Invalid input")} }
-  }
-
                             //1.Park bike
 
   func parkBike() {
     var parkSlot:Int
     print("Enter the bike number")
-    let bikeNUmber = readLine()
+    if let bikeNumber = readLine(){
+    if (bikeSlot.contains{$0.value == bikeNumber}) == false{  //Checks whether bike number already exists
     availableSlotForBike()
     print("\nEnter the slot number")
     if let slotInput = readLine(){
       if let slotInputInt = Int(slotInput){
         parkSlot = slotInputInt
-        if bikeSlot[parkSlot] == ""{
-          bikeSlot[parkSlot] = bikeNUmber
+        if bikeSlot[parkSlot] == ""{    //Checks available slot and allocate
+          bikeSlot[parkSlot] = bikeNumber
+          let dateformatter = DateFormatter()
+          dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+          let currentDate = dateformatter.string(from: Date())
+          bikeparkinglog.append(BikeParkingLog(slotNumber: parkSlot, vehicleNumber: bikeNumber, fromDate: currentDate))
           print("Slot allocated successfully")
         }
         else{
           print("Invalid slot number")
         }
       }else{ print("Invalid input")}
-    }
-     }
+    }}else{print("Bike is already found")}
+     }}
   
-                    //2.Parked bike details
-  func parkedBike(){
-    bikeSlot.sorted(by: <).forEach{key,value in
+                    //2.Bike parking details
+  
+  func bikeParkingDetails(){
+    print("Bike Parking Details\n")
+    bikeSlot.sorted(by: <).forEach{key,value in  //sort slots in ascending order and show
                     print("\(key) - \((value == "") ? "Available" : value )")
                     }
   }
                     //3.Available slots for bike
+  
   func availableSlotForBike(){
-    print("Available slots")
+    var available = false
+    print("Available slots:")
     bikeSlot.sorted(by: <).forEach{key,value in 
-                     if value == ""{
+                     if value == ""{          //if available ,show slot
                        print(key, terminator: " ")
+                       available = true
                      }
                     }
+    if available == false{print("No slot available")}
   }
 
                     //4.Search bike by slot
@@ -120,11 +159,67 @@ class Parking{
     if let slotInput = readLine(){
       if let slotInputInt = Int(slotInput){
         slot = slotInputInt
-    if bikeSlot[slot] == "" || slot > totalBikeSlot || slot <= 0{print("No bike found")}
-    else{print("\(slot) - \(bikeSlot[slot] ?? "")")}}}
+    if bikeSlot[slot] == ""{
+      print("No bike found")
+    }
+    else if slot > totalBikeSlot || slot <= 0{print("No Slot found")}        //if input is above max or below 1
+    else{print("\(slot) - \(bikeSlot[slot] ?? "")")}}else{print("Invalid input")}}
   }
+  
                        //5.Search bike by number
+  func searchBikeByNumber(){
+    print("Enter the bike number to search")
+    var found = false
+    if let bikeNumber = readLine(){
+      bikeSlot.forEach{key,value in
+                      if(value == bikeNumber){
+                        print("Bike number \(value) is found at \(key) slot")
+                        found = true
+                        return
+                        }}
+      if found == false{print("\(bikeNumber) is not found")}
+    }   
+  }
+                        //6.Departing bike
+  
+  func departingBike(){
+    var slot:Int
+    print("""
+          DEPARTING BIKE
+          ==============
+         """)
+    self.bikeParkingDetails()
+    print("Enter slot number")
+    if let slotInput = readLine(){
+      if let slotInputInt = Int(slotInput){
+        slot = slotInputInt
+        
+        if(bikeSlot[slot] != ""){ //checking whether bike is available
+          bikeSlot[slot] = ""     //bike departed
+          for index in  stride(from: bikeparkinglog.count-1, through: 0, by: -1) where bikeparkinglog[index].slotNumber == slot{ //to store departing date and time
+            let dateformatter = DateFormatter()
+            dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            let currentDate = dateformatter.string(from: Date())
+              bikeparkinglog[index].toDate = currentDate
+            break
+          }
+          print("Bike departed successfully")
+        }
+        else{print("No bike found")}
+      }else {print("Invalid input")}}}
 
+                        //Bike Log Detaisls
+  func bikeLogDetails(){
+    bikeparkinglog.forEach{bike in
+      print("""
+            Bike number    : \(bike.vehicleNumber)
+            Slot           : \(bike.slotNumber)
+            Park date      : \(bike.fromDate)
+            Departing date : \(bike.toDate ?? "")
+            \n
+           """)
+    }
+  }
 }
 let parking = Parking()
 parking.totalSlot()
