@@ -3,8 +3,7 @@
 import Foundation
 struct StudentLogin{
 var studentName:String
-    var studentId:Int
-    
+    var studentId:Int 
 }
 struct Book{
 var bookId:Int
@@ -80,6 +79,7 @@ issuedBooks()
 
 case 9:
 returnBook()
+  
 default:
     print("Invalid input")
     }} while userInput != 0 ;
@@ -242,9 +242,9 @@ Student name    :\(student.studentName)
               if let bookIdInput = readLine(){
                 if let bookIdInputInt = Int(bookIdInput){
                   bookId = bookIdInputInt
-                    for bookIndex in 0..<book.count where book[bookIndex].bookId == bookId{ //execute if book id is found
+                    for bookIndex in 0 ..< book.count where book[bookIndex].bookId == bookId{ //execute if book id is found
                             if book[bookIndex].available > 0{
-                                book[bookIndex].available = book[bookIndex].available-1
+                                book[bookIndex].available -= 1
                            let currentDate = Date()
                            issue.append(Issue(studentId:studentId , bookId:bookId , currentDate: currentDate))
                                 print("issued successfully")
@@ -295,8 +295,7 @@ Issued Date : \(issue.currentDate) \n
                                     let issueDate = issue[issueIndex].currentDate     //getting issued date
                                     let returnDate=Date()                     //returning date
                                     var dateComponent=DateComponents()
-            dateComponent.timeZone = TimeZone.current
-                dateComponent.day = 30
+                                    dateComponent.day = 30
                                     
                                     if let dueDate = Calendar.current.date(byAdding: dateComponent, to:issueDate){
                                         if(dueDate < returnDate){
@@ -306,7 +305,7 @@ Issued Date : \(issue.currentDate) \n
                                         else{
                                             issue.remove(at: issueIndex)
                                             for bookIndex in 0..<book.count where book[bookIndex].bookId == bookId{
-                                                    book[bookIndex].available = book[bookIndex].available + 1
+                                                    book[bookIndex].available += 1
                                                 print("Book returned successfully"); return
                                             }
                                         }
