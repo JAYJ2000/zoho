@@ -340,6 +340,10 @@ class Parking{
 
                         //13.Bike Log Detaisls
   func bikeLogDetails(){
+    if bikeparkinglog.count == 0{
+      print("No log found")
+      return
+    }
     print("""
             BIKE LOG DETAILS
             ================
@@ -357,6 +361,10 @@ class Parking{
   }
                           //14.Car Log Detaisls
   func carLogDetails(){
+    if carparkinglog.count == 0{
+      print("No log found")
+      return
+    }
     print("""
             CAR LOG DETAILS
             ===============
