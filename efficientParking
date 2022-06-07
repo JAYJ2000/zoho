@@ -1,14 +1,16 @@
 import Foundation
+
 enum type{
     case bike,car
 }
+
 struct VehicleDetails{
     var totalCarSlot:Int!
-    var carSlot:[String] = []
-   
+    var carSlot:[String] = []  
     var totalBikeSlot:Int!
     var bikeSlot:[String] = []
 }
+
 class Vehicle{
   
   var vehicledetails = VehicleDetails()
@@ -16,15 +18,15 @@ class Vehicle{
   func totalSlots(){                      //Total Slot allocation
     var totalCarSlot: Int
     var totalBikeSlot: Int
-    
-    print("Enter total car slot")
-    if let totalCarSlotInput = readLine(){
-      totalCarSlot = totalCarSlotInput.toInt()
-      
+
     print("Enter total bike slot")
     if let totalBikeSlotInput = readLine(){
       totalBikeSlot = totalBikeSlotInput.toInt()
       
+    print("Enter total car slot")
+    if let totalCarSlotInput = readLine(){
+      totalCarSlot = totalCarSlotInput.toInt()
+            
     if totalCarSlot > 0 || totalBikeSlot > 0{
       vehicledetails.totalBikeSlot = totalBikeSlot
       vehicledetails.bikeSlot = Array(repeating: "", count: totalBikeSlot)
@@ -63,7 +65,7 @@ class Vehicle{
           case 0:
           return
           case 1:
-          addVehicle(vehicleType: type.bike)
+          vehicledetails.totalBikeSlot > 0 ? addVehicle(vehicleType: type.bike) : print("No slot found")
           case 2:
           self.parkedDetails(vehicleList: vehicledetails.bikeSlot)
           case 3:
@@ -73,16 +75,13 @@ class Vehicle{
           case 5:
           searchVehicleByNumber(vehicleList: vehicledetails.bikeSlot)  
           case 6:
-          print("Enter bike number")
-          if let bikeNumber = readLine(){
-          let foundValue = self.departing(number: bikeNumber, vehicleList: vehicledetails.bikeSlot)
+          let foundValue = self.departing(vehicleList: vehicledetails.bikeSlot)
           if foundValue >= 0{
             vehicledetails.bikeSlot[foundValue] = ""
             print("Vehicle departed successfully")
-          }         
-          }
+          }              
           case 7:
-          addVehicle(vehicleType: type.car)
+          vehicledetails.totalCarSlot > 0 ? addVehicle(vehicleType: type.car) : print("No slot found")
           case 8:
           self.parkedDetails(vehicleList: vehicledetails.carSlot)
           case 9:
@@ -91,8 +90,12 @@ class Vehicle{
           self.searchVehicleBySlot(vehicleList: vehicledetails.carSlot)
           case 11:
           self.searchVehicleByNumber(vehicleList: vehicledetails.carSlot)
-          //case 12:
-          //self.departingCar()  
+          case 12:
+          let foundValue = self.departing(vehicleList: vehicledetails.carSlot)
+          if foundValue >= 0{
+            vehicledetails.carSlot[foundValue] = ""
+            print("Vehicle departed successfully")
+          }     
           
           default :
           print("Invalid input")
@@ -124,13 +127,13 @@ class Vehicle{
           switch vehicleType{
             case .bike:
 if vehicledetails.bikeSlot[slotNumber] == "" {
-vehicledetails.bikeSlot[slotNumber] = vehicleNumber.lowercased()
+vehicledetails.bikeSlot[slotNumber] = vehicleNumber
 print("vehicle allocated successfully")}
             else{print("Slot already have bike")}       
             case .car:
 if vehicledetails.carSlot[slotNumber] == "" {
-vehicledetails.carSlot[slotNumber] = vehicleNumber.lowercased()}
-            else{print("Slot already have bike") }       
+vehicledetails.carSlot[slotNumber] = vehicleNumber}
+            else{print("Slot already have car") }       
     }}}}
   
                                       //2,8 Parked details
@@ -163,7 +166,9 @@ vehicledetails.carSlot[slotNumber] = vehicleNumber.lowercased()}
     }}
     
                       //6,12 return whether depart vehicle number is valid
-    func departing(number:String, vehicleList : [String]) -> Int{
+    func departing(vehicleList : [String]) -> Int{
+      print("Enter vehicle Number")
+      guard let number = readLine()else{return -1}
         if (vehicleList.filter{$0.localizedCaseInsensitiveContains(number)}).count == 1{
           let vehicleFoundIndex = vehicleList.indices.filter{vehicleList[$0].localizedCaseInsensitiveContains(number)}
           let departVehicle:Int = vehicleFoundIndex[0]
