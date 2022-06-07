@@ -69,18 +69,9 @@ class Vehicle{
           case 3:
           self.availableSlot(available: vehicledetails.bikeSlot)
           case 4:
-          print("Enter the Bike slot to search")
-          var slotSearch:Int
-          if let slotSearchInput = readLine(){
-            slotSearch = slotSearchInput.toInt()
-          self.searchVehicleBySlot(number: slotSearch,vehicleList: vehicledetails.bikeSlot)
-          }
-          
+          self.searchVehicleBySlot(vehicleList: vehicledetails.bikeSlot)          
           case 5:
-          print("Enter the Bike number to search")
-          if let bikeNumber = readLine(){
-          searchVehicleByNumber(number: bikeNumber,vehicleList: vehicledetails.bikeSlot)
-          }
+          searchVehicleByNumber(vehicleList: vehicledetails.bikeSlot)  
           case 6:
           print("Enter bike number")
           if let bikeNumber = readLine(){
@@ -88,52 +79,26 @@ class Vehicle{
           if foundValue >= 0{
             vehicledetails.bikeSlot[foundValue] = ""
             print("Vehicle departed successfully")
+          }         
           }
-          
-          }
-       /*   case 7:
-          self.parkCar()
+          case 7:
+          addVehicle(vehicleType: type.car)
           case 8:
-          self.ParkingDetails(vehicleList: vehicledetails.carSlot)
+          self.parkedDetails(vehicleList: vehicledetails.carSlot)
           case 9:
           self.availableSlot(available: vehicledetails.carSlot)
           case 10:
-          print("Enter the Car slot to search")
-          var slotSearch:Int
-          if let slotSearchInput = readLine(){
-            slotSearch = slotSearchInput.toInt()
-          self.searchVehicleBySlot(number: slotSearch,vehicleList: vehicledetails.carSlot)
-          }
-          self.searchCarBySlot()
+          self.searchVehicleBySlot(vehicleList: vehicledetails.carSlot)
           case 11:
-          self.searchCarByNumber()
-          case 12:
-          self.departingCar()  */
+          self.searchVehicleByNumber(vehicleList: vehicledetails.carSlot)
+          //case 12:
+          //self.departingCar()  
           
           default :
           print("Invalid input")
         }          
     }}while(userChoice != 0)
   }
-
-/*  func parkBike(){                          //1.ParkBike
-    
-    var slotNumber: Int
-    print("Enter the Bike number")
-    if let bikeNumber = readLine(){
-    if addVehicle(add: bikeNumber, vehicleType: type.bike){
-      print("Enter slot number")
-        if let slotNumberInput = readLine(){
-          slotNumber = slotNumberInput.toInt()
-          guard slotNumber >= 0 || slotNumber < vehicledetails.totalBikeSlot else{
-            print("No slot found")
-            return
-          }
-          vehicledetails.bikeSlot[slotNumber] = bikeNumber
-          print("Slot allocated Successfully")
-        }}}} */
-
-
   
                         //1,7 return whether adding vehicle number is valid
     func addVehicle(vehicleType: type){
@@ -158,10 +123,15 @@ class Vehicle{
           
           switch vehicleType{
             case .bike:
-vehicledetails.bikeSlot[slotNumber] == "" ? vehicledetails.bikeSlot[slotNumber] = vehicleNumber.lowercased();print("success") : print("Slot already have bike")       
+if vehicledetails.bikeSlot[slotNumber] == "" {
+vehicledetails.bikeSlot[slotNumber] = vehicleNumber.lowercased()
+print("vehicle allocated successfully")}
+            else{print("Slot already have bike")}       
             case .car:
-vehicledetails.carSlot[slotNumber] == "" ? vehicledetails.carSlot[slotNumber] = vehicleNumber.lowercased() : print("Slot already have bike")        
-    }}}}}
+if vehicledetails.carSlot[slotNumber] == "" {
+vehicledetails.carSlot[slotNumber] = vehicleNumber.lowercased()}
+            else{print("Slot already have bike") }       
+    }}}}
   
                                       //2,8 Parked details
   func parkedDetails(vehicleList:[String]){
@@ -174,16 +144,23 @@ vehicledetails.carSlot[slotNumber] == "" ? vehicledetails.carSlot[slotNumber] = 
         print(available.indices.filter{available[$0] == "" })
     }
                     //4,10 search vehicle by slot
-    func searchVehicleBySlot(number: Int,vehicleList: [String]){
+    func searchVehicleBySlot(vehicleList: [String]){
+      print("Enter the slot to search")
+          var number:Int
+          if let slotSearchInput = readLine(){
+            number = slotSearchInput.toInt()
       if number >= 0 && number < vehicleList.count{
         print("At slot \(number)  \(vehicleList[number] == "" ? "No vehicle found" : vehicleList[number])")}
       else{print("No slot found")}
-    }
+    }}
                       //5,11 Search Vehicle by plate number
-    func searchVehicleByNumber(number: String,vehicleList: [String]){
-      if (vehicleList.filter{$0.localizedCaseInsensitiveContains(number)}).count == 0{print("No vehicle found");return}
+    func searchVehicleByNumber(vehicleList: [String]){
+      print("Enter the Bike number to search")
+          if let number = readLine(){
+      if (vehicleList.filter{$0.localizedCaseInsensitiveContains(number)}).count == 0{
+              print("No vehicle found");return}
         print("VehicleNumber \(number) - \(vehicleList.indices.filter{vehicleList[$0].localizedCaseInsensitiveContains(number)})")
-    }
+    }}
     
                       //6,12 return whether depart vehicle number is valid
     func departing(number:String, vehicleList : [String]) -> Int{
