@@ -1,37 +1,38 @@
 import Foundation
 
-enum type{
-    case bike,car
+struct ParkingLog{
+  var slotNumber:Int
+  var vehicleNumber:String
+  var fromDate:String
+  var toDate: String?
 }
 
 struct VehicleDetails{
-    var totalCarSlot:Int!
+    var totalCarSlot = 0
     var carSlot:[String] = []  
-    var totalBikeSlot:Int!
+    var totalBikeSlot = 0
     var bikeSlot:[String] = []
 }
 
-class Vehicle{
-  
+class Parking{
+
   var vehicledetails = VehicleDetails()
-  
+  var bikeparkinglog:[ParkingLog] = []
+  var carparkinglog:[ParkingLog] = []
+
   func totalSlots(){                      //Total Slot allocation
-    var totalCarSlot: Int
-    var totalBikeSlot: Int
 
     print("Enter total bike slot")
     if let totalBikeSlotInput = readLine(){
-      totalBikeSlot = totalBikeSlotInput.toInt()
+      vehicledetails.totalBikeSlot = totalBikeSlotInput.toInt()
       
     print("Enter total car slot")
     if let totalCarSlotInput = readLine(){
-      totalCarSlot = totalCarSlotInput.toInt()
+      vehicledetails.totalCarSlot = totalCarSlotInput.toInt()
             
-    if totalCarSlot > 0 || totalBikeSlot > 0{
-      vehicledetails.totalBikeSlot = totalBikeSlot
-      vehicledetails.bikeSlot = Array(repeating: "", count: totalBikeSlot)
-      vehicledetails.totalCarSlot = totalCarSlot
-      vehicledetails.carSlot = Array(repeating: "", count: totalCarSlot)
+    if vehicledetails.totalCarSlot > 0 || vehicledetails.totalBikeSlot > 0{
+      vehicledetails.bikeSlot = Array(repeating: "", count: vehicledetails.totalBikeSlot)
+      vehicledetails.carSlot = Array(repeating: "", count: vehicledetails.totalCarSlot)
       self.menu()
     }else{print("Atleast 1 slot is needed")}
     }}}
@@ -56,7 +57,9 @@ class Vehicle{
           10.Search car by slot
           11.Search car by number plate
           12.Departing car
-          
+
+          13.Bike log
+          14.Car log
           0.Exit
          """)
     if let userChoiceInput = readLine(){
@@ -65,9 +68,9 @@ class Vehicle{
           case 0:
           return
           case 1:
-          vehicledetails.totalBikeSlot > 0 ? addVehicle(vehicleType: type.bike) : print("No slot found")
+          vehicledetails.totalBikeSlot > 0 ? addVehicle(vehicleSlot: &vehicledetails.bikeSlot , vehicleSlot2: vehicledetails.carSlot , log: &bikeparkinglog) : print("No slot found")
           case 2:
-          self.parkedDetails(vehicleList: vehicledetails.bikeSlot)
+          vehicledetails.totalBikeSlot > 0 ? self.parkedDetails(vehicleList: vehicledetails.bikeSlot) : print("No slot found")
           case 3:
           self.availableSlot(available: vehicledetails.bikeSlot)
           case 4:
@@ -75,15 +78,11 @@ class Vehicle{
           case 5:
           searchVehicleByNumber(vehicleList: vehicledetails.bikeSlot)  
           case 6:
-          let foundValue = self.departing(vehicleList: vehicledetails.bikeSlot)
-          if foundValue >= 0{
-            vehicledetails.bikeSlot[foundValue] = ""
-            print("Vehicle departed successfully")
-          }              
+          self.departing(vehicleList: &vehicledetails.bikeSlot,log: &bikeparkinglog)        
           case 7:
-          vehicledetails.totalCarSlot > 0 ? addVehicle(vehicleType: type.car) : print("No slot found")
+          vehicledetails.totalCarSlot > 0 ? addVehicle(vehicleSlot: &vehicledetails.carSlot, vehicleSlot2 : vehicledetails.bikeSlot, log: &carparkinglog) : print("No slot found")
           case 8:
-          self.parkedDetails(vehicleList: vehicledetails.carSlot)
+          vehicledetails.totalCarSlot > 0 ? self.parkedDetails(vehicleList: vehicledetails.carSlot) : print("No slot found")
           case 9:
           self.availableSlot(available: vehicledetails.carSlot)
           case 10:
@@ -91,62 +90,60 @@ class Vehicle{
           case 11:
           self.searchVehicleByNumber(vehicleList: vehicledetails.carSlot)
           case 12:
-          let foundValue = self.departing(vehicleList: vehicledetails.carSlot)
-          if foundValue >= 0{
-            vehicledetails.carSlot[foundValue] = ""
-            print("Vehicle departed successfully")
-          }     
-          
+          self.departing(vehicleList: &vehicledetails.carSlot,log: &carparkinglog)  
+          case 13:
+          self.log(structObject: &bikeparkinglog)
+          case 14:
+          self.log(structObject: &carparkinglog)
           default :
           print("Invalid input")
         }          
     }}while(userChoice != 0)
   }
   
-                        //1,7 return whether adding vehicle number is valid
-    func addVehicle(vehicleType: type){
+                        //1,7 Add vehicle
+    func addVehicle(vehicleSlot : inout [String] , vehicleSlot2: [String] , log : inout [ParkingLog]){
       var slotNumber:Int
       print("Enter the vehicle number")
       if let vehicleNumber = readLine(){
   
-        guard !(vehicledetails.carSlot.contains(vehicleNumber) || vehicledetails.bikeSlot.contains(vehicleNumber)) else{
+        guard !(vehicleSlot.contains(vehicleNumber) || vehicleSlot2.contains(vehicleNumber)) else{
             print("Vehicle is already found")
             return}
         
-          availableSlot(available: vehicleType == type.bike ? vehicledetails.bikeSlot : vehicledetails.carSlot)
+          availableSlot(available: vehicleSlot)
         
          print("Enter slot number")
         if let slotNumberInput = readLine(){
           slotNumber = slotNumberInput.toInt()
-          guard slotNumber >= 0 || slotNumber < (vehicleType == type.bike ? vehicledetails.totalBikeSlot : vehicledetails.totalCarSlot)
+          guard slotNumber >= 0 && slotNumber < vehicleSlot.count
           else{
             print("No slot found")
             return
           }
-          
-          switch vehicleType{
-            case .bike:
-if vehicledetails.bikeSlot[slotNumber] == "" {
-vehicledetails.bikeSlot[slotNumber] = vehicleNumber
-print("vehicle allocated successfully")}
-            else{print("Slot already have bike")}       
-            case .car:
-if vehicledetails.carSlot[slotNumber] == "" {
-vehicledetails.carSlot[slotNumber] = vehicleNumber}
-            else{print("Slot already have car") }       
-    }}}}
+            
+if vehicleSlot[slotNumber] == "" {
+  vehicleSlot[slotNumber] = vehicleNumber
+  log.append(ParkingLog(slotNumber: slotNumber, vehicleNumber: vehicleNumber, fromDate: self.currentDate()))
+  print("vehicle parked successfully")}
+            else{print("Slot already have vehicle")}   
+      
+    }}}
   
-                                      //2,8 Parked details
+                      //2,8 Parked details
+  
   func parkedDetails(vehicleList:[String]){
     for index in 0...vehicleList.count-1{
       print("\(index) - \(vehicleList[index] == "" ? "Availabe" : vehicleList[index])")
     }
   }
                       //3,9 Available slot
+  
     func availableSlot(available : [String]){
         print(available.indices.filter{available[$0] == "" })
     }
                     //4,10 search vehicle by slot
+  
     func searchVehicleBySlot(vehicleList: [String]){
       print("Enter the slot to search")
           var number:Int
@@ -157,6 +154,7 @@ vehicledetails.carSlot[slotNumber] = vehicleNumber}
       else{print("No slot found")}
     }}
                       //5,11 Search Vehicle by plate number
+  
     func searchVehicleByNumber(vehicleList: [String]){
       print("Enter the Bike number to search")
           if let number = readLine(){
@@ -166,27 +164,60 @@ vehicledetails.carSlot[slotNumber] = vehicleNumber}
     }}
     
                       //6,12 return whether depart vehicle number is valid
-    func departing(vehicleList : [String]) -> Int{
+  
+    func departing(vehicleList : inout [String],log : inout [ParkingLog]){
       print("Enter vehicle Number")
-      guard let number = readLine()else{return -1}
+      guard let number = readLine()else{return}
         if (vehicleList.filter{$0.localizedCaseInsensitiveContains(number)}).count == 1{
           let vehicleFoundIndex = vehicleList.indices.filter{vehicleList[$0].localizedCaseInsensitiveContains(number)}
           let departVehicle:Int = vehicleFoundIndex[0]
-          print(departVehicle)
-            return departVehicle
+             
+      for index in  stride(from: log.count-1, through: 0, by: -1) where log[index].slotNumber == departVehicle{//depart
+            log[index].toDate = currentDate()
+            break}
+            vehicleList[departVehicle] = ""
+            print("Vehicle departed successfully")
+          
         }
         else if (vehicleList.filter{$0.localizedCaseInsensitiveContains(number)}).count > 1{
             print("More than one vehicle found with this number, Give more detail")
-          return -1
         }
-        else{print("Vehicle not found");return -1}
+        else{print("Vehicle not found")}
     }
-}  
+                                          //Date function
+  
+  func currentDate() -> String{
+    let dateformatter = DateFormatter()
+    dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+    return dateformatter.string(from: Date())
+  }
+  
+                        //13 bike/car log
 
+func log(structObject: inout [ParkingLog] ){
+      if structObject.count == 0{
+      print("No log found")
+      return
+    }
+    print("""
+                LOG DETAILS
+                ===========
+         """)
+    structObject.forEach{vehicle in
+      print("""
+                      
+            Number         : \(vehicle.vehicleNumber)
+            Slot           : \(vehicle.slotNumber)
+            Park date      : \(vehicle.fromDate)
+            Departing date : \(vehicle.toDate ?? "")
+            \n
+           """)
+    }}
+}  
 extension String{
   func toInt() -> Int{
   return Int(self) ?? 0
 }}
 
-let vehicle = Vehicle()
-vehicle.totalSlots()
+let parking = Parking()
+parking.totalSlots()
